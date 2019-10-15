@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { createGenericTestComponent } from '../test-utils';
 import { Component, ViewChild } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
@@ -100,7 +100,7 @@ describe('Array Field Type', () => {
     expect(formArray.at(0)).toEqual(formControl);
   });
 
-  it('should emit `modelChange` on model change', () => {
+  it('should emit `modelChange` on model change', fakeAsync(() => {
     app.fields = [{
       key: 'foo',
       type: 'array',
@@ -117,6 +117,7 @@ describe('Array Field Type', () => {
     const subscription = fixture.componentInstance.formlyForm.modelChange.subscribe(spy);
     fixture.nativeElement.querySelector('#add').click();
     fixture.detectChanges();
+    tick();
 
     const formArray = app.form.get('foo') as FormArray;
     formArray.at(0).get('title').patchValue('***');
@@ -130,7 +131,8 @@ describe('Array Field Type', () => {
     expect(app.model).toEqual({ foo: [] });
 
     subscription.unsubscribe();
-  });
+    tick();
+  }));
 });
 
 @Component({ selector: 'formly-form-test', template: '', entryComponents: [] })

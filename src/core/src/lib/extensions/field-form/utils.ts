@@ -109,7 +109,7 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
     && control.value !== value
     && control instanceof FormControl
   ) {
-    control.patchValue(value);
+    control.patchValue(value, { emitEvent: false });
   }
   const key = paths[paths.length - 1];
   if (!field.hide && parent.get([key]) !== control) {
