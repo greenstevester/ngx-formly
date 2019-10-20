@@ -52,6 +52,7 @@ export function findControl(field: FormlyFieldConfig): AbstractControl {
 
 export function registerControl(field: FormlyFieldConfig, control?: any, emitEvent = false) {
   control = control || field.formControl;
+
   if (!control['_fields']) {
     defineHiddenProp(control, '_fields', []);
   }
@@ -75,31 +76,32 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
     }
   }
 
-  let parent = field.parent.formControl as FormGroup;
-  if (!parent) {
+  if (!field.form || !field.parent) {
     return;
   }
 
+  let form = field.form;
   const paths = getKeyPath(field);
-  if (!parent['_formlyControls']) {
-    defineHiddenProp(parent, '_formlyControls', {});
+  if (!form['_formlyControls']) {
+    defineHiddenProp(form, '_formlyControls', {});
   }
-  parent['_formlyControls'][paths.join('.')] = control;
+  form['_formlyControls'][paths.join('.')] = control;
 
   for (let i = 0; i < (paths.length - 1); i++) {
     const path = paths[i];
-    if (!parent.get([path])) {
+    if (!form.get([path])) {
       registerControl({
         key: path,
         formControl: new FormGroup({}),
-        parent: { formControl: parent },
+        form,
+        parent: {},
       });
     }
 
-    parent = <FormGroup> parent.get([path]);
+    form = <FormGroup> form.get([path]);
   }
 
-  if (field['autoClear'] && !isUndefined(field.defaultValue) && isUndefined(getFieldInitialValue(field))) {
+  if (field['autoClear'] && field.parent && !isUndefined(field.defaultValue) && isUndefined(getFieldInitialValue(field))) {
     assignModelValue(field.parent.model, getKeyPath(field), field.defaultValue);
   }
 
@@ -112,11 +114,11 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
     control.patchValue(value, { emitEvent: false });
   }
   const key = paths[paths.length - 1];
-  if (!field.hide && parent.get([key]) !== control) {
+  if (!field.hide && form.get([key]) !== control) {
     updateControl(
-      parent,
+      form,
       { emitEvent },
-      () => parent.setControl(key, control),
+      () => form.setControl(key, control),
     );
   }
 }

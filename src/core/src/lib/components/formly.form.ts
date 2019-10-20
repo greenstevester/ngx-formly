@@ -4,9 +4,9 @@ import { FormGroup, FormArray } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions, FormlyFieldConfigCache } from './formly.field.config';
 import { FormlyFormBuilder } from '../services/formly.form.builder';
 import { FormlyConfig } from '../services/formly.config';
-import { assignModelValue, clone, getKeyPath } from '../utils';
+import { clone } from '../utils';
 import { timer, of } from 'rxjs';
-import { tap, debounce, switchMap, timeout, catchError, first, filter } from 'rxjs/operators';
+import { debounce, switchMap, timeout, catchError, first, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'formly-form',
@@ -73,22 +73,8 @@ export class FormlyForm implements DoCheck, OnChanges, OnDestroy {
     let useDebounce = false;
     const sub = this.field.options.fieldChanges.pipe(
       filter(({ type }) => type === 'valueChanges'),
-      tap(({ field, value }) => {
-        if (
-          value == null
-          && field['autoClear']
-          && !field.formControl.parent
-        ) {
-          const paths = getKeyPath(field);
-          const k = paths.pop();
-          const m = paths.reduce((model, path) => model[path] || {}, field.parent.model);
-          delete m[k];
-        } else {
-          assignModelValue(field.parent.model, getKeyPath(field), value);
-        }
-      }),
       debounce(() => useDebounce ? timer(100) : of()),
-      switchMap((f) => this.form.valueChanges.pipe(
+      switchMap(() => this.form.valueChanges.pipe(
         timeout(0),
         catchError(() => of(null)),
         first(),
