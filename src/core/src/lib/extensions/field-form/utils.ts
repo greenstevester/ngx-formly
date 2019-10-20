@@ -1,6 +1,15 @@
 import { FormArray, FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { FormlyFieldConfig } from '../../core';
-import { getKeyPath, getFieldValue, getFieldInitialValue, isNullOrUndefined, defineHiddenProp, wrapProperty, assignModelValue, isUndefined } from '../../utils';
+import {
+  getKeyPath,
+  getFieldValue,
+  getFieldInitialValue,
+  isNullOrUndefined,
+  defineHiddenProp,
+  wrapProperty,
+  assignModelValue,
+  isUndefined,
+} from '../../utils';
 
 export function unregisterControl(field: FormlyFieldConfig, emitEvent = false) {
   const form = field.formControl.parent as FormArray | FormGroup;
@@ -70,9 +79,7 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
       }
     });
     if (control.registerOnDisabledChange) {
-      control.registerOnDisabledChange(
-        (value: boolean) => field.templateOptions['___$disabled'] = value,
-      );
+      control.registerOnDisabledChange((value: boolean) => (field.templateOptions['___$disabled'] = value));
     }
   }
 
@@ -87,7 +94,7 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
   }
   form['_formlyControls'][paths.join('.')] = control;
 
-  for (let i = 0; i < (paths.length - 1); i++) {
+  for (let i = 0; i < paths.length - 1; i++) {
     const path = paths[i];
     if (!form.get([path])) {
       registerControl({
@@ -98,41 +105,40 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
       });
     }
 
-    form = <FormGroup> form.get([path]);
+    form = <FormGroup>form.get([path]);
   }
 
-  if (field['autoClear'] && field.parent && !isUndefined(field.defaultValue) && isUndefined(getFieldInitialValue(field))) {
+  if (
+    field['autoClear'] &&
+    field.parent &&
+    !isUndefined(field.defaultValue) &&
+    isUndefined(getFieldInitialValue(field))
+  ) {
     assignModelValue(field.parent.model, getKeyPath(field), field.defaultValue);
   }
 
   const value = getFieldValue(field);
   if (
-    !(isNullOrUndefined(control.value) && isNullOrUndefined(value))
-    && control.value !== value
-    && control instanceof FormControl
+    !(isNullOrUndefined(control.value) && isNullOrUndefined(value)) &&
+    control.value !== value &&
+    control instanceof FormControl
   ) {
     control.patchValue(value, { emitEvent: false });
   }
   const key = paths[paths.length - 1];
   if (!field.hide && form.get([key]) !== control) {
-    updateControl(
-      form,
-      { emitEvent },
-      () => form.setControl(key, control),
-    );
+    updateControl(form, { emitEvent }, () => form.setControl(key, control));
   }
 }
 
-function updateControl(form: FormGroup|FormArray, opts: { emitEvent: boolean }, action: Function) {
+function updateControl(form: FormGroup | FormArray, opts: { emitEvent: boolean }, action: Function) {
   /**
    *  workaround for https://github.com/angular/angular/issues/27679
    */
   if (form instanceof FormGroup && !form['__patchForEachChild']) {
     defineHiddenProp(form, '__patchForEachChild', true);
     (form as any)._forEachChild = (cb: Function) => {
-      Object
-        .keys(form.controls)
-        .forEach(k => form.controls[k] && cb(form.controls[k], k));
+      Object.keys(form.controls).forEach(k => form.controls[k] && cb(form.controls[k], k));
     };
   }
 
@@ -141,7 +147,7 @@ function updateControl(form: FormGroup|FormArray, opts: { emitEvent: boolean }, 
    */
   const updateValueAndValidity = form.updateValueAndValidity.bind(form);
   if (opts.emitEvent === false) {
-    form.updateValueAndValidity = (opts) => {
+    form.updateValueAndValidity = opts => {
       updateValueAndValidity({ ...(opts || {}), emitEvent: false });
     };
   }
