@@ -7,8 +7,8 @@ import {
   isNullOrUndefined,
   defineHiddenProp,
   wrapProperty,
-  assignModelValue,
   isUndefined,
+  assignFieldValue,
 } from '../../utils';
 
 export function unregisterControl(field: FormlyFieldConfig, emitEvent = false) {
@@ -114,7 +114,7 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
     !isUndefined(field.defaultValue) &&
     isUndefined(getFieldInitialValue(field))
   ) {
-    assignModelValue(field.parent.model, getKeyPath(field), field.defaultValue);
+    assignFieldValue(field, field.defaultValue);
   }
 
   const value = getFieldValue(field);
