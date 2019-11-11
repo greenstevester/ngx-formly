@@ -280,7 +280,7 @@ describe('FormlyForm Component', () => {
           },
         ],
       });
-      expect(form.value).toEqual({ title: null });
+      expect(form.value).toEqual({ title: undefined });
 
       setInputs({ model: { title: '***' } });
       expect(form.value).toEqual({ title: '***' });
@@ -367,12 +367,12 @@ describe('FormlyForm Component', () => {
 
       const inputDebugEl = query('input');
 
-      expect(form.get('name').value).toBeNull();
+      expect(form.get('name').value).toBeUndefined();
 
       inputDebugEl.triggerEventHandler('input', { target: { value: 'First' } });
       detectChanges();
 
-      expect(form.get('name').value).toBeNull();
+      expect(form.get('name').value).toBeUndefined();
 
       inputDebugEl.triggerEventHandler('blur', {});
       detectChanges();
@@ -393,13 +393,13 @@ describe('FormlyForm Component', () => {
 
       const inputDebugEl = query('input');
 
-      expect(form.get('name').value).toBeNull();
+      expect(form.get('name').value).toBeUndefined();
       inputDebugEl.triggerEventHandler('input', { target: { value: 'First' } });
 
       inputDebugEl.triggerEventHandler('blur', {});
       detectChanges();
 
-      expect(form.get('name').value).toBeNull();
+      expect(form.get('name').value).toBeUndefined();
 
       query('form').triggerEventHandler('submit', {});
       detectChanges();
