@@ -1,6 +1,14 @@
 import { FormArray, FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { FormlyFieldConfig } from '../../core';
-import { getKeyPath, getFieldValue, isNil, defineHiddenProp, wrapProperty, getFieldInitialValue, assignFieldValue } from '../../utils';
+import {
+  getKeyPath,
+  getFieldValue,
+  isNil,
+  defineHiddenProp,
+  wrapProperty,
+  getFieldInitialValue,
+  assignFieldValue,
+} from '../../utils';
 import { isUndefined } from 'util';
 
 export function unregisterControl(field: FormlyFieldConfig, emitEvent = false) {

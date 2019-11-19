@@ -83,13 +83,13 @@ describe('FormlyForm Component', () => {
       const { fixture } = renderComponent({
         fields: [{ key: 'title', type: 'input' }],
       });
-  
+
       const app = fixture.componentInstance;
       spyOn(app, 'modelChange');
-  
+
       app.form.get('title').patchValue('***');
       fixture.detectChanges();
-  
+
       expect(app.modelChange).toHaveBeenCalledTimes(1);
       expect(app.modelChange).toHaveBeenCalledWith({ title: '***' });
     });
@@ -103,14 +103,14 @@ describe('FormlyForm Component', () => {
               key: 'bar',
               hideExpression: '!model.foo',
             },
-          ]
+          ],
         },
         { extras: { checkExpressionOn: 'modelChange' } },
       );
 
       const app = fixture.componentInstance;
       let barControl = null;
-      app.modelChange = () => barControl = app.form.get('bar');
+      app.modelChange = () => (barControl = app.form.get('bar'));
 
       app.form.get('foo').patchValue('***');
       expect(barControl).not.toBeNull();
@@ -129,7 +129,7 @@ describe('FormlyForm Component', () => {
             },
           },
           { key: 'bar' },
-        ]
+        ],
       });
 
       tick();
@@ -153,7 +153,7 @@ describe('FormlyForm Component', () => {
         },
         { extras: { checkExpressionOn: 'modelChange' } },
       );
-  
+
       form.reset();
       expect(model.bar).toBeNull();
       expect(fields[1].formControl.value).toBeNull();
@@ -440,8 +440,6 @@ describe('FormlyForm Component', () => {
       expect(createComponent).toThrowError(/No provider for ParentService!/i);
     });
   });
-
-
 });
 
 @Injectable()
