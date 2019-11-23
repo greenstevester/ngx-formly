@@ -72,6 +72,7 @@ export class FormlyForm implements DoCheck, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.fields || changes.form || changes.model) {
+      this.valueChangesUnsubscribe();
       this.builder.buildField(this.field);
       this.valueChangesUnsubscribe = this.valueChanges();
     }
