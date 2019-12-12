@@ -82,7 +82,7 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
     }
   }
 
-  if (!field.form || !field.parent) {
+  if (!field.form) {
     return;
   }
 
@@ -107,12 +107,7 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
     form = <FormGroup>form.get([path]);
   }
 
-  if (
-    field['autoClear'] &&
-    field.parent &&
-    !isUndefined(field.defaultValue) &&
-    isUndefined(getFieldInitialValue(field))
-  ) {
+  if (field['autoClear'] && !isUndefined(field.defaultValue) && isUndefined(getFieldInitialValue(field))) {
     assignFieldValue(field, field.defaultValue);
   }
 
@@ -122,7 +117,7 @@ export function registerControl(field: FormlyFieldConfig, control?: any, emitEve
   }
   const key = paths[paths.length - 1];
   if (!field.hide && form.get([key]) !== control) {
-    updateControl(form, { emitEvent }, () => form.setControl(key, control));
+    updateControl(form, { emitEvent }, () => (form as FormGroup).setControl(key, control));
   }
 }
 
